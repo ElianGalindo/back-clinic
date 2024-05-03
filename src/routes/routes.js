@@ -1,0 +1,19 @@
+const express = require('express')
+const router = express.Router()
+const { registerUser, loginUser, getAllUsers, deleteUser, updateUser, createProduct, getAllProducts, getProductById, updateProduct, deleteProduct } = require('./../controller/userController')
+const authenticateToken = require('./../auth/authMiddleware')
+//Rutas de usuarios
+router.post('/register', registerUser)
+router.post('/login', loginUser)
+router.get('/get-all-users', authenticateToken, getAllUsers)
+router.delete('/users/:email', authenticateToken, deleteUser)
+router.put('/users/:email', authenticateToken, updateUser)
+
+// Rutas para productos
+router.post('/products/create', createProduct); // Crear un nuevo producto
+router.get('/get-all-products', getAllProducts); // Obtener todos los productos
+router.get('/products/:id', getProductById); // Obtener un producto por su ID
+router.put('/products/:id', updateProduct); // Actualizar un producto
+router.delete('/products/:id', deleteProduct); // Eliminar un producto
+
+module.exports = router
