@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { registerUser, loginUser, getAllUsers, deleteUser, updateUser, createProduct, getAllProducts, getProductById, updateProduct, deleteProduct } = require('./../controller/userController')
 const authenticateToken = require('./../auth/authMiddleware')
+const { registerPacient, getAllPacients, deletePacient, updatePacient, getPacientById  } = require('./../controller/pacientController')
 //Rutas de usuarios
 router.post('/register', registerUser)
 router.post('/login', loginUser)
@@ -16,4 +17,10 @@ router.get('/products/:id', getProductById); // Obtener un producto por su ID
 router.put('/products/:id', updateProduct); // Actualizar un producto
 router.delete('/products/:id', deleteProduct); // Eliminar un producto
 
+//Rutas para pacientes
+router.post('/pacients/create', registerPacient)
+router.get('/pacients/get-all-pacients', getAllPacients)
+router.delete('/pacients/:email', deletePacient)
+router.put('/pacients/:email', updatePacient)
+router.get('/pacients/:email', getPacientById)
 module.exports = router
