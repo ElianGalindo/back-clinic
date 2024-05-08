@@ -3,6 +3,8 @@ const router = express.Router()
 const { registerUser, loginUser, getAllUsers, deleteUser, updateUser, createProduct, getAllProducts, getProductById, updateProduct, deleteProduct } = require('./../controller/userController')
 const authenticateToken = require('./../auth/authMiddleware')
 const { registerPacient, getAllPacients, deletePacient, updatePacient, getPacientById  } = require('./../controller/pacientController')
+const { registerCita, getAllCitas } = require('../controller/citasController');
+
 //Rutas de usuarios
 router.post('/register', registerUser)
 router.post('/login', loginUser)
@@ -23,4 +25,9 @@ router.get('/pacients/get-all-pacients', getAllPacients)
 router.delete('/pacients/:email', deletePacient)
 router.put('/pacients/:email', updatePacient)
 router.get('/pacients/:email', getPacientById)
+
+//Rutas para citas
+router.post('/citas/create', registerCita);
+router.get('/citas/get-all-citas', getAllCitas);
+
 module.exports = router
