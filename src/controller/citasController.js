@@ -34,8 +34,23 @@ const getAllCitas = async (req, res) => {
             message: 'Internal Server Error'
         });
     }
-};
+}
+const getCitasPorDia = async (req, res) => {
+    try {
+        const { dia } = req.params;
+        const citas = await Cita.getAllCitasPorDia(dia);
+        res.json({
+            citas,
+            message: 'success'
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Internal Server Error'
+        });
+    }
+}
+
 
 // Otros controladores de citas (eliminar, actualizar, obtener por ID) pueden agregarse aquí
 
-module.exports = { registerCita, getAllCitas };
+module.exports = { registerCita, getAllCitas, getCitasPorDia };
