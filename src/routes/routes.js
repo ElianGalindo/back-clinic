@@ -3,7 +3,7 @@ const router = express.Router()
 const { registerUser, loginUser, getAllUsers, deleteUser, updateUser, createProduct, getAllProducts, getProductById, updateProduct, deleteProduct } = require('./../controller/userController')
 const authenticateToken = require('./../auth/authMiddleware')
 const { registerPacient, getAllPacients, deletePacient, updatePacient, getPacientById  } = require('./../controller/pacientController')
-const { registerCita, getAllCitas } = require('../controller/citasController');
+const { registerCita, getAllCitas, getCitasPorDia } = require('../controller/citasController');
 
 //Rutas de usuarios
 router.post('/register', registerUser)
@@ -27,7 +27,8 @@ router.put('/pacients/:email', updatePacient)
 router.get('/pacients/:email', getPacientById)
 
 //Rutas para citas
-router.post('/citas/create', registerCita);
-router.get('/citas/get-all-citas', getAllCitas);
+router.post('/citas/create', registerCita)
+router.get('/citas/get-all-citas', getAllCitas)
+router.get('/citas/get-citas-por-dia/:dia', getCitasPorDia)
 
 module.exports = router
