@@ -4,17 +4,13 @@ const multer = require('multer')
 const registerPacient = async (req, res) => {
     try {
         const {email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo} = req.body
-        const image = req.file
         const existingPacient = await Pacient.findByEmail(email)
         if(existingPacient){
             return res.status(404).json({
                 message: 'User alredy exists'
             })
         }
-
         const newPacient = await Pacient.createPacient(email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, image)
-        const imageRef = storage.ref(`pacients/${newPacient.email}/${image.originalname}`) // Add this line to create a reference to the image file
-        await imageRef.put(image)
         res.status(201).json({
             message: 'User Registered Successfully',
             user: newPacient
