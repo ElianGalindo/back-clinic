@@ -5,6 +5,7 @@ const authenticateToken = require('./../auth/authMiddleware')
 const { registerPacient, getAllPacients, deletePacient, updatePacient, getPacientById  } = require('./../controller/pacientController')
 const { registerCita, getAllCitas, getCitasPorDia } = require('../controller/citasController')
 const { registerPrescription, getAllPrescriptions, getPrescriptionsByPatientId } = require('../controller/prescriptionController')
+const { registerCheckup, getAllCheckups, getCheckupsByPatientId } = require('../controller/checkupController')
 //Rutas de usuarios
 router.post('/register', registerUser)
 router.post('/login', loginUser)
@@ -36,4 +37,8 @@ router.post('/prescripcion/create', registerPrescription)
 router.get('/prescripcion/get-all-prescriptions', getAllPrescriptions)
 router.get('/prescripcion/get-prescriptions-by-patient/:pacienteId', getPrescriptionsByPatientId)
 
+//Rutas para checkups
+router.post('/checkup/create', registerCheckup)
+router.get('/checkup/get-all-checkups', getAllCheckups)
+router.get('/checkup/get-checkups-by-patient/:pacienteId', getCheckupsByPatientId)
 module.exports = router
