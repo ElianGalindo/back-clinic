@@ -93,7 +93,6 @@ class Checkup extends ICheckup {
             throw new Error('Error fetching prescriptions by patient ID');
         }
     }
-    // Otros métodos estáticos para manejar citas pueden agregarse aquí
 }
 
 module.exports = Checkup;
