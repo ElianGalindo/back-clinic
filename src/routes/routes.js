@@ -3,8 +3,8 @@ const router = express.Router()
 const { registerUser, loginUser, getAllUsers, deleteUser, updateUser, createProduct, getAllProducts, getProductById, updateProduct, deleteProduct } = require('./../controller/userController')
 const authenticateToken = require('./../auth/authMiddleware')
 const { registerPacient, getAllPacients, deletePacient, updatePacient, getPacientById  } = require('./../controller/pacientController')
-const { registerCita, getAllCitas, getCitasPorDia } = require('../controller/citasController');
-
+const { registerCita, getAllCitas, getCitasPorDia } = require('../controller/citasController')
+const { registerPrescription, getAllPrescriptions, getPrescriptionsByPatientId } = require('../controller/prescriptionController')
 //Rutas de usuarios
 router.post('/register', registerUser)
 router.post('/login', loginUser)
@@ -30,5 +30,10 @@ router.get('/pacients/:email', getPacientById)
 router.post('/citas/create', registerCita)
 router.get('/citas/get-all-citas', getAllCitas)
 router.get('/citas/get-citas-por-dia/:dia', getCitasPorDia)
+
+//Rutas para prescripciones
+router.post('/prescripcion/create', registerPrescription)
+router.get('/prescripcion/get-all-prescriptions', getAllPrescriptions)
+router.get('/prescripcion/get-prescriptions-by-patient/:pacienteId', getPrescriptionsByPatientId)
 
 module.exports = router

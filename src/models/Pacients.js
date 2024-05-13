@@ -2,9 +2,10 @@
 const admin = require('../config/firebase')
 const IPacient = require('../interfaces/IPacient')
 const firestore = admin.firestore()
+const storage = admin.storage()
 
 class Pacient extends IPacient {
-    constructor (email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo){
+    constructor (email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, image){
         super()
         this.email = email,
         this.nombre = nombre,
@@ -13,11 +14,15 @@ class Pacient extends IPacient {
         this.direccion = direccion,
         this.telefono = telefono,
         this.edad = edad,
-        this.sexo = sexo
+        this.sexo = sexo,
+        this.image = image
     }
-    static async createPacient (email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo) {
+    static async createPacient (email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, image) {
         try {
             const pacient = firestore.collection('pacients').doc(email)
+            const imageRef = storage.ref(`pacients/${email}/image`) // Create a reference to the image in Firebase Storage
+            await imageRef.put(image) // Upload the image to Firebase Storage
+            const imageUrl = await imageRef.getDownloadURL() 
             await pacient.set({
                 email,
                 nombre,
@@ -26,9 +31,10 @@ class Pacient extends IPacient {
                 direccion,
                 telefono,
                 edad,
-                sexo
+                sexo,
+                image: imageUrl
             })
-            return new Pacient(email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo)
+            return new Pacient(email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, imageUrl)
         } catch (error) {
             console.log('Error => ', error)
             throw new Error('Error creating user')
