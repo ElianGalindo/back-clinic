@@ -10,7 +10,7 @@ const registerPacient = async (req, res) => {
                 message: 'User alredy exists'
             })
         }
-        const newPacient = await Pacient.createPacient(email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, image)
+        const newPacient = await Pacient.createPacient(email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo)
         res.status(201).json({
             message: 'User Registered Successfully',
             user: newPacient
