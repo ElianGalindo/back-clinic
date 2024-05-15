@@ -48,7 +48,8 @@ class Cita extends ICita {
                             direccion: paciente.direccion,
                             telefono: paciente.telefono,
                             edad: paciente.edad,
-                            sexo: paciente.sexo
+                            sexo: paciente.sexo,
+                            archivos: paciente.archivo
                         },
                         fecha: citaData.fecha,
                         hora: citaData.hora,
@@ -88,7 +89,8 @@ class Cita extends ICita {
                             direccion: paciente.direccion,
                             telefono: paciente.telefono,
                             edad: paciente.edad,
-                            sexo: paciente.sexo
+                            sexo: paciente.sexo,
+                            archivos: paciente.archivo
                         },
                         fecha: citaData.fecha,
                         hora: citaData.hora,

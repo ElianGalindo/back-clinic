@@ -4,7 +4,7 @@ const IPacient = require('../interfaces/IPacient')
 const firestore = admin.firestore()
 
 class Pacient extends IPacient {
-    constructor (email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo){
+    constructor (email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, archivos){
         super()
         this.email = email,
         this.nombre = nombre,
@@ -13,9 +13,10 @@ class Pacient extends IPacient {
         this.direccion = direccion,
         this.telefono = telefono,
         this.edad = edad,
-        this.sexo = sexo
+        this.sexo = sexo,
+        this.archivo = archivos
     }
-    static async createPacient (email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo) {
+    static async createPacient (email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, archivos) {
         try {
             const pacient = firestore.collection('pacients').doc(email)
             await pacient.set({
@@ -26,9 +27,10 @@ class Pacient extends IPacient {
                 direccion,
                 telefono,
                 edad,
-                sexo
+                sexo,
+                archivos
             })
-            return new Pacient(email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo)
+            return new Pacient(email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, archivos)
         } catch (error) {
             console.log('Error => ', error)
             throw new Error('Error creating user')
@@ -40,7 +42,7 @@ class Pacient extends IPacient {
             const pacientDoc = await pacient.get()
             if(pacientDoc.exists){
                 const pacientData = pacientDoc.data()
-                return new Pacient(pacientData.email, pacientData.nombre, pacientData.apaterno, pacientData.amaterno, pacientData.direccion, pacientData.telefono, pacientData.edad, pacientData.sexo)
+                return new Pacient(pacientData.email, pacientData.nombre, pacientData.apaterno, pacientData.amaterno, pacientData.direccion, pacientData.telefono, pacientData.edad, pacientData.sexo, pacientData.archivos)
             }
             return null
         } catch (error) {
