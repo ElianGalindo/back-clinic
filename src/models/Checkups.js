@@ -1,7 +1,9 @@
 const admin = require('../config/firebase');
 const ICheckup = require('../interfaces/ICheckup');
 const Pacient = require('./Pacients')
-const firestore = admin.firestore();
+const firestore = admin.firestore()
+const { Storage } = require('@google-cloud/storage')
+const storage = new Storage()
 
 class Checkup extends ICheckup {
     constructor(pacienteId, fecha, hora, tratamiento, doctor, comentarios, archivos, pagos) {
@@ -12,7 +14,7 @@ class Checkup extends ICheckup {
         this.tratamiento = tratamiento
         this.doctor = doctor
         this.comentarios = comentarios
-        this.archivos = archivos
+        this.archivo = archivos
         this.pagos = pagos
     }
 
