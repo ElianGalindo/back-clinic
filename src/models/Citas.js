@@ -105,6 +105,24 @@ class Cita extends ICita {
             throw error;
         }
     }
+    static async deleteCita(citaId) {
+        try {
+            await firestore.collection('citas').doc(citaId).delete()
+        } catch (error) {
+            throw error
+        }
+    }
+    static async updateCita (citaId, citaData){
+        try {
+            await firestore.collection('citas').doc(citaId).update(citaData)
+            const citaUpdated = firebase.collection('citas').doc(citaId).get()
+            return{
+                citaUpdated: citaUpdated.data()
+            }
+        } catch (error) {
+            throw error
+        }
+    }
     
     
 

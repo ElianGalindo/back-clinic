@@ -1,6 +1,22 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const Product = require('../models/Products')
+const multer = require('multer')
+const admin = require('../config/firebase')
+const storage = multer.memoryStorage()
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // Limitar tamaño de archivo a 5MB
+    fileFilter: function(req, file, cb) {
+        const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type. Only JPEG, PNG, and PDF files are allowed.'));
+        }
+    }
+}).single('archivo')
+
 const loginUser = async (req, res) => {
     try {
         const {email, password} = req.body
@@ -38,17 +54,31 @@ const loginUser = async (req, res) => {
 
 const registerUser = async (req, res) => {
     try {
-        const {email, password, nombre, apaterno, amaterno, direccion, telefono} = req.body
-        const existingUser = await User.findByEmail(email)
-        if(existingUser){
-            return res.status(404).json({
-                message: 'User alredy exists'
+        upload(req, res, async function (err){
+            if (err) {
+                console.error(err);
+                return res.status(400).json({ message: 'Error uploading file' });
+            }
+            const {email, password, nombre, apaterno, amaterno, direccion, telefono} = req.body
+            let archivoURL = null;
+            if (req.file) {
+                // Subir el archivo a Firebase Storage y obtener su URL
+                const bucket = admin.storage().bucket();
+                const file = bucket.file(req.file.originalname);
+                await file.save(req.file.buffer, { contentType: req.file.mimetype });
+                archivoURL = await file.getSignedUrl({ action: 'read', expires: '01-01-2100' });
+            }
+            const existingUser = await User.findByEmail(email)
+            if(existingUser){
+                return res.status(404).json({
+                    message: 'User alredy exists'
+                })
+            }
+            const newUser = await User.createUser(email, password, nombre, apaterno, amaterno, direccion, telefono, archivoURL)
+            res.status(201).json({
+                message: 'User Registered Successfully',
+                user: newUser
             })
-        }
-        const newUser = await User.createUser(email, password, nombre, apaterno, amaterno, direccion, telefono)
-        res.status(201).json({
-            message: 'User Registered Successfully',
-            user: newUser
         })
     } catch (error) {
         return res.status(500).json({
@@ -97,83 +127,4 @@ const updateUser = async (req, res) => {
         })
     }
 }
-
-//Productos_________________
-const createProduct = async (req, res) => {
-    try {
-        const { image, name, price, description } = req.body;
-        const newProduct = await Product.createProduct(image, name, price, description);
-        res.status(201).json({
-            message: 'Product created successfully',
-            product: newProduct
-        });
-    } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error'
-        });
-    }
-}
-
-const getAllProducts = async (req, res) => {
-    try {
-        const products = await Product.getAllProducts();
-        res.json({
-            products,
-            message: 'Success'
-        });
-    } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error'
-        });
-    }
-}
-
-const getProductById = async (req, res) => {
-    try {
-        const productId = req.params.id;
-        const product = await Product.getProductById(productId);
-        if (product) {
-            res.json({
-                product,
-                message: 'Success'
-            });
-        } else {
-            res.status(404).json({
-                message: 'Product not found'
-            });
-        }
-    } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error'
-        });
-    }
-}
-
-const updateProduct = async (req, res) => {
-    try {
-        const productId = req.params.id;
-        const newData = req.body;
-        await Product.updateProduct(productId, newData);
-        res.json({
-            message: 'Product updated successfully'
-        });
-    } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error'
-        });
-    }
-}
-
-const deleteProduct = async (req, res) => {
-    try {
-        const productId = req.params.id;
-        await Product.deleteProduct(productId);
-        res.status(204).send();
-    } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error'
-        });
-    }
-}
-
-module.exports = {registerUser, loginUser, getAllUsers, deleteUser, updateUser, createProduct, getAllProducts, getProductById, updateProduct, deleteProduct}
+module.exports = {registerUser, loginUser, getAllUsers, deleteUser, updateUser}

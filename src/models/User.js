@@ -4,7 +4,7 @@ const IUser = require('../interfaces/IUser')
 const firestore = admin.firestore()
 
 class User extends IUser {
-    constructor (email, password, nombre, apaterno, amaterno, direccion, telefono){
+    constructor (email, password, nombre, apaterno, amaterno, direccion, telefono, archivos){
         super()
         this.email = email,
         this.password = password,
@@ -12,9 +12,10 @@ class User extends IUser {
         this.apaterno = apaterno,
         this.amaterno = amaterno,
         this.direccion = direccion,
-        this.telefono = telefono 
+        this.telefono = telefono,
+        this.archivo = archivos
     }
-    static async createUser (email, password, nombre, apaterno, amaterno, direccion, telefono) {
+    static async createUser (email, password, nombre, apaterno, amaterno, direccion, telefono, archivos) {
         try {
             const hash = await bcrypt.hash(password, 10)
             const user = firestore.collection('users').doc(email)
@@ -25,9 +26,10 @@ class User extends IUser {
                 apaterno,
                 amaterno,
                 direccion,
-                telefono
+                telefono,
+                archivos
             })
-            return new User(email, password, nombre, apaterno, amaterno, direccion, telefono)
+            return new User(email, password, nombre, apaterno, amaterno, direccion, telefono, archivos)
         } catch (error) {
             console.log('Error => ', error)
             throw new Error('Error creating user')
