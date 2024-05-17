@@ -49,8 +49,33 @@ const getCitasPorDia = async (req, res) => {
         });
     }
 }
-
+const deleteCita = async (req, res) => {
+    const citaId = req.params.id
+    try {
+        await Cita.deleteCita(citaId)
+        res.status(204).send()
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Internal Server Error'
+        })
+    }
+}
+const updateCita = async (req, res) => {
+    const citaId = req.params.id
+    const citaData = req.body
+    try {
+        const citaUpdate = await Cita.updateCita(citaId, citaData)
+        res.json({
+            citaUpdate,
+            message: 'success'
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Internal Server Error'
+        })
+    }
+}
 
 // Otros controladores de citas (eliminar, actualizar, obtener por ID) pueden agregarse aquí
 
-module.exports = { registerCita, getAllCitas, getCitasPorDia };
+module.exports = { registerCita, getAllCitas, getCitasPorDia, deleteCita, updateCita };

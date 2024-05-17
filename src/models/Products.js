@@ -1,24 +1,25 @@
 const admin = require('../config/firebase')
 const firestore = admin.firestore()
+const IProduct = require('../interfaces/IProduct')
 
-class Product {
-    constructor(id, image, name, price, description) {
-        this.id = id,
-        this.image = image,
-        this.name = name,
-        this.price = price,
-        this.description = description
+class Product extends IProduct {
+    constructor(nombre, precio, descripcion, archivos) {
+        super()
+        this.nombre = nombre,
+        this.precio = precio,
+        this.descripcion = descripcion,
+        this.archivo = archivos
     }
 
-    static async createProduct(image, name, price, description) {
+    static async createProducto(nombre, precio, descripcion, archivos) {
         try {
-            const productRef = await firestore.collection('products').add({
-                image,
-                name,
-                price,
-                description
+            await firestore.collection('products').add({
+                nombre,
+                precio,
+                descripcion,
+                archivos
             });
-            return new Product(productRef.id, image, name, price, description);
+            return new Product(nombre, precio, descripcion, archivos)
         } catch (error) {
             throw error;
         }
@@ -26,15 +27,15 @@ class Product {
 
     static async getAllProducts() {
         try {
-            const productsSnapshot = await firestore.collection('products').get();
-            const products = [];
-            productsSnapshot.forEach(doc => {
+            const productos = await firestore.collection('products').get();
+            const products = []
+            productos.forEach(doc => {
                 products.push({
                     id: doc.id,
                     ...doc.data()
                 });
             });
-            return products;
+            return products
         } catch (error) {
             throw error;
         }
@@ -45,7 +46,7 @@ class Product {
             const productDoc = await firestore.collection('products').doc(productId).get();
             if (productDoc.exists) {
                 const productData = productDoc.data();
-                return new Product(productId, productData.image, productData.name, productData.price, productData.description);
+                return new Product(productData.productId, productData.nombre, productData.precio, productData.descripcion, productData.archivo);
             }
             return null;
         } catch (error) {
@@ -53,9 +54,9 @@ class Product {
         }
     }
 
-    static async updateProduct(productId, newData) {
+    static async updateProduct(productId, productData) {
         try {
-            await firestore.collection('products').doc(productId).update(newData);
+            await firestore.collection('products').doc(productId).update(productData);
         } catch (error) {
             throw error;
         }

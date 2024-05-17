@@ -1,4 +1,4 @@
-const Pacient = require('../models/Pacients')
+const Product = require('../models/Products')
 const multer = require('multer')
 const admin = require('../config/firebase')
 const storage = multer.memoryStorage()
@@ -15,14 +15,14 @@ const upload = multer({
     }
 }).single('archivo')
 
-const registerPacient = async (req, res) => {
+const registerProduct = async (req, res) => {
     try {
         upload(req, res, async function (err) {
             if (err) {
                 console.error(err);
                 return res.status(400).json({ message: 'Error uploading file' });
             }
-            const {email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo} = req.body
+            const {nombre, precio, descripcion} = req.body
             let archivoURL = null;
             if (req.file) {
                 // Subir el archivo a Firebase Storage y obtener su URL
@@ -32,8 +32,8 @@ const registerPacient = async (req, res) => {
                 archivoURL = await file.getSignedUrl({ action: 'read', expires: '01-01-2100' });
             }
 
-            const newPacient = await Pacient.createPacient(email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, archivoURL);
-            res.status(201).json({ message: 'Pacient Registered Successfully', pacient: newPacient });
+            const newProduct = await Product.createProducto(nombre, precio, descripcion, archivoURL);
+            res.status(201).json({ message: 'Product Registered Successfully', product: newProduct });
         })
     } catch (error) {
         return res.status(500).json({
@@ -41,11 +41,11 @@ const registerPacient = async (req, res) => {
         })
     }
 }
-const getAllPacients = async (req, res) => {
+const getAllProducts = async (req, res) => {
     try {
-        const pacients = await Pacient.getAllPacients()
+        const productos = await Product.getAllProducts()
         res.json({
-            pacients,
+            productos,
             message: 'success'
         })
     } catch (error) {
@@ -55,10 +55,10 @@ const getAllPacients = async (req, res) => {
     }
 }
 
-const deletePacient = async (req, res) => {
-    const pacientEmail = req.params.email
+const deleteProduct = async (req, res) => {
+    const productId = req.params.id
     try {
-        await Pacient.deletePacient(pacientEmail)
+        await Product.deleteProduct(productId)
         res.status(204).send()
     } catch (error) {
         return res.status(500).json({
@@ -67,13 +67,13 @@ const deletePacient = async (req, res) => {
     }
 }
 
-const updatePacient = async (req, res) => {
-    const pacientEmail = req.params.email
-    const pacientData = req.body
+const updateProduct = async (req, res) => {
+    const productId = req.params.id
+    const productData = req.body
     try {
-        const pacientUpdate = await Pacient.updatePacient(pacientEmail, pacientData)
+        const productUpdate = await Product.updateProduct(productId, productData)
         res.json({
-            pacientUpdate,
+            productUpdate,
             message: 'success'
         })
     } catch (error) {
@@ -83,11 +83,11 @@ const updatePacient = async (req, res) => {
     }
 }
 
-const getPacientById = async (req, res) => {
+const getProductById = async (req, res) => {
     try {
-        const pacientId = req.params.email;
-        const pacient = await Pacient.getPacientById(pacientId);
-        if (pacient) {
+        const productId = req.params.id
+        const product = await Product.getProductById(productId);
+        if (product) {
             res.json({
                 pacient,
                 message: 'Success'
@@ -104,4 +104,4 @@ const getPacientById = async (req, res) => {
     }
 }
 
-module.exports = {registerPacient, getAllPacients, deletePacient, updatePacient, getPacientById}
+module.exports = {registerProduct, getAllProducts, getProductById, updateProduct, deleteProduct}
