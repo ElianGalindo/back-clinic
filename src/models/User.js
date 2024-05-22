@@ -4,7 +4,7 @@ const IUser = require('../interfaces/IUser')
 const firestore = admin.firestore()
 
 class User extends IUser {
-    constructor (email, password, nombre, apaterno, amaterno, direccion, telefono, archivos){
+    constructor (email, password, nombre, apaterno, amaterno, direccion, telefono, archivos, cart){
         super()
         this.email = email,
         this.password = password,
@@ -13,7 +13,8 @@ class User extends IUser {
         this.amaterno = amaterno,
         this.direccion = direccion,
         this.telefono = telefono,
-        this.archivo = archivos
+        this.archivo = archivos,
+        this.cart = cart || []
     }
     static async createUser (email, password, nombre, apaterno, amaterno, direccion, telefono, archivos) {
         try {
@@ -27,9 +28,10 @@ class User extends IUser {
                 amaterno,
                 direccion,
                 telefono,
-                archivos
+                archivos,
+                cart: []
             })
-            return new User(email, password, nombre, apaterno, amaterno, direccion, telefono, archivos)
+            return new User(email, password, nombre, apaterno, amaterno, direccion, telefono, archivos, [])
         } catch (error) {
             console.log('Error => ', error)
             throw new Error('Error creating user')
@@ -86,6 +88,14 @@ class User extends IUser {
             }
         } catch (error) {
             throw error
+        }
+    }
+
+    static async updateCart(email, cart) {
+        try {
+            await firestore.collection('users').doc(email).update({ cart });
+        } catch (error) {
+            throw error;
         }
     }
 }

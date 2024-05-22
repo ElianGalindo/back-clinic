@@ -7,6 +7,7 @@ const { registerCita, getAllCitas, getCitasPorDia, deleteCita, updateCita } = re
 const { registerPrescription, getAllPrescriptions, getPrescriptionsByPatientId } = require('../controller/prescriptionController')
 const { registerCheckup, getAllCheckups, getCheckupsByPatientId } = require('../controller/checkupController')
 const { registerProduct, getAllProducts, getProductById, updateProduct, deleteProduct } = require('../controller/productController')
+const {createCheckoutSession} = require('../controller/pagoController')
 //Rutas de usuarios
 router.post('/register', registerUser)
 router.post('/login', loginUser)
@@ -20,6 +21,9 @@ router.get('/products/get-all-products', getAllProducts)
 router.get('/products/:id', getProductById)
 router.put('/products/:id', updateProduct)
 router.delete('/products/:id', deleteProduct)
+
+//Ruta de pago con stripe
+router.post('/create-stripe-session', createCheckoutSession)
 
 //Rutas para pacientes
 router.post('/pacients/create', registerPacient)

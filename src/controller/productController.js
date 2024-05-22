@@ -1,4 +1,5 @@
 const Product = require('../models/Products')
+const User = require('../models/User')
 const multer = require('multer')
 const admin = require('../config/firebase')
 const storage = multer.memoryStorage()
