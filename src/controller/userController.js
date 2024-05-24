@@ -47,7 +47,7 @@ const loginUser = async (req, res) => {
             user: {
                 email: userDoc.email,
                 nombre: userDoc.nombre,
-                archivos: userDoc.archivos,
+                archivos: userDoc.archivo,
                 apaterno: userDoc.apaterno
             }
         })
