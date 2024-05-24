@@ -26,18 +26,18 @@ router.delete('/products/:id', deleteProduct)
 router.post('/create-stripe-session', createCheckoutSession)
 
 //Rutas para pacientes
-router.post('/pacients/create', registerPacient)
-router.get('/pacients/get-all-pacients', getAllPacients)
-router.delete('/pacients/:email', deletePacient)
-router.put('/pacients/:email', updatePacient)
-router.get('/pacients/:email', getPacientById)
+router.post('/pacients/create', authenticateToken, registerPacient)
+router.get('/pacients/get-all-pacients', authenticateToken, getAllPacients)
+router.delete('/pacients/:email', authenticateToken, deletePacient)
+router.put('/pacients/:email', authenticateToken, updatePacient)
+router.get('/pacients/:email', authenticateToken, getPacientById)
 
 //Rutas para citas
-router.post('/citas/create', registerCita)
-router.get('/citas/get-all-citas', getAllCitas)
-router.get('/citas/get-citas-por-dia/:dia', getCitasPorDia)
-router.delete('/citas/:id', deleteCita)
-router.put('/citas/:id', updateCita)
+router.post('/citas/create', authenticateToken, registerCita)
+router.get('/citas/get-all-citas', authenticateToken, getAllCitas)
+router.get('/citas/get-citas-por-dia/:dia', authenticateToken, getCitasPorDia)
+router.delete('/citas/:id', authenticateToken, deleteCita)
+router.put('/citas/:id', authenticateToken, updateCita)
 
 //Rutas para prescripciones
 router.post('/prescripcion/create', registerPrescription)

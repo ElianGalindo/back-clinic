@@ -2,9 +2,9 @@
 const admin = require('../config/firebase')
 const IPacient = require('../interfaces/IPacient')
 const firestore = admin.firestore()
-
+const User = require('./User')
 class Pacient extends IPacient {
-    constructor (email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, archivos){
+    constructor (email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, archivos, doctorId){
         super()
         this.email = email,
         this.nombre = nombre,
@@ -14,9 +14,10 @@ class Pacient extends IPacient {
         this.telefono = telefono,
         this.edad = edad,
         this.sexo = sexo,
-        this.archivo = archivos
+        this.archivo = archivos,
+        this.doctorId = doctorId
     }
-    static async createPacient (email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, archivos) {
+    static async createPacient (email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, archivos, doctorId) {
         try {
             const pacient = firestore.collection('pacients').doc(email)
             await pacient.set({
@@ -28,9 +29,10 @@ class Pacient extends IPacient {
                 telefono,
                 edad,
                 sexo,
-                archivos
+                archivos,
+                doctorId
             })
-            return new Pacient(email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, archivos)
+            return new Pacient(email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, archivos, doctorId)
         } catch (error) {
             console.log('Error => ', error)
             throw new Error('Error creating user')
@@ -42,7 +44,7 @@ class Pacient extends IPacient {
             const pacientDoc = await pacient.get()
             if(pacientDoc.exists){
                 const pacientData = pacientDoc.data()
-                return new Pacient(pacientData.email, pacientData.nombre, pacientData.apaterno, pacientData.amaterno, pacientData.direccion, pacientData.telefono, pacientData.edad, pacientData.sexo, pacientData.archivos)
+                return new Pacient(pacientData.email, pacientData.nombre, pacientData.apaterno, pacientData.amaterno, pacientData.direccion, pacientData.telefono, pacientData.edad, pacientData.sexo, pacientData.archivos, pacientData.doctorId)
             }
             return null
         } catch (error) {
@@ -67,6 +69,42 @@ class Pacient extends IPacient {
         }
     }
 
+    static async getPacientsByDoctorId(doctorId) {
+        try {
+            const pacientesSnapshot = await firestore.collection('pacients').where('doctorId', '==', doctorId).get();
+            const pacientes = [];
+            await Promise.all(pacientesSnapshot.docs.map(async (doc) => {
+                const pacienteData = doc.data();
+                const doctor = await User.findByEmail(pacienteData.doctorId);
+                if (doctor) {
+                    pacientes.push({
+                        email: doc.id,
+                        doctor: {
+                            email: doctor.email,
+                            nombre: doctor.nombre,
+                            apaterno: doctor.apaterno,
+                            amaterno: doctor.amaterno,
+                            direccion: doctor.direccion,
+                            telefono: doctor.telefono,
+                            archivos: doctor.archivos,
+                        },
+                        nombre: pacienteData.nombre,
+                        apaterno: pacienteData.apaterno,
+                        amaterno: pacienteData.amaterno,
+                        consultorio: pacienteData.consultorio,
+                        direccion: pacienteData.direccion,
+                        telefono: pacienteData.telefono,
+                        edad: pacienteData.edad,
+                        sexo: pacienteData.sexo,
+                        archivos: pacienteData.archivos
+                    });
+                }
+            }));
+            return pacientes;
+        } catch (error) {
+            throw error;
+        }
+    }
     static async deletePacient(pacientEmail) {
         try {
             await firestore.collection('pacients').doc(pacientEmail).delete()
