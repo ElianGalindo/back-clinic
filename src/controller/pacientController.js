@@ -22,7 +22,7 @@ const registerPacient = async (req, res) => {
                 console.error(err);
                 return res.status(400).json({ message: 'Error uploading file' });
             }
-            const {email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo} = req.body
+            const {email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, doctorId} = req.body
             let archivoURL = null;
             if (req.file) {
                 // Subir el archivo a Firebase Storage y obtener su URL
@@ -32,7 +32,7 @@ const registerPacient = async (req, res) => {
                 archivoURL = await file.getSignedUrl({ action: 'read', expires: '01-01-2100' });
             }
 
-            const newPacient = await Pacient.createPacient(email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, archivoURL);
+            const newPacient = await Pacient.createPacient(email, nombre, apaterno, amaterno, direccion, telefono, edad, sexo, archivoURL, doctorId);
             res.status(201).json({ message: 'Pacient Registered Successfully', pacient: newPacient });
         })
     } catch (error) {
@@ -43,7 +43,8 @@ const registerPacient = async (req, res) => {
 }
 const getAllPacients = async (req, res) => {
     try {
-        const pacients = await Pacient.getAllPacients()
+        const doctorId = req.user.email
+        const pacients = await Pacient.getPacientsByDoctorId(doctorId)
         res.json({
             pacients,
             message: 'success'
@@ -54,7 +55,6 @@ const getAllPacients = async (req, res) => {
         })
     }
 }
-
 const deletePacient = async (req, res) => {
     const pacientEmail = req.params.email
     try {

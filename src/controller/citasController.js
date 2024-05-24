@@ -1,16 +1,17 @@
 const Cita = require('../models/Citas');
 const Pacient = require('../models/Pacients');
+const User = require('../models/User')
 
 const registerCita = async (req, res) => {
     try {
-        const { pacienteId, fecha, hora, motivo, doctor, consultorio } = req.body;
+        const { pacienteId, doctorId, fecha, hora, motivo, consultorio } = req.body;
         const existingPacient = await Pacient.getPacientById(pacienteId);
         if (!existingPacient) {
             return res.status(404).json({
                 message: 'Paciente not found'
             });
         }
-        const newCita = await Cita.createCita(pacienteId, fecha, hora, motivo, doctor, consultorio);
+        const newCita = await Cita.createCita(pacienteId, doctorId, fecha, hora, motivo, consultorio);
         res.status(201).json({
             message: 'Cita Registered Successfully',
             cita: newCita
@@ -24,7 +25,8 @@ const registerCita = async (req, res) => {
 
 const getAllCitas = async (req, res) => {
     try {
-        const citas = await Cita.getAllCitas();
+        const doctorId = req.user.email
+        const citas = await Cita.getCitasByDoctorId(doctorId);
         res.json({
             citas,
             message: 'success'
