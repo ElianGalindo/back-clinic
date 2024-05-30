@@ -80,6 +80,13 @@ class Prescription extends IPrescription {
             throw new Error('Error fetching prescriptions by patient ID')
         }
     }
+    static async deletePrescription(prescriptionId) {
+        try {
+            await firestore.collection('prescripciones').doc(prescriptionId).delete()
+        } catch (error) {
+            throw error
+        }
+    }
     
 }
 

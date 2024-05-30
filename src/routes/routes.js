@@ -4,8 +4,8 @@ const { registerUser, loginUser, getAllUsers, deleteUser, updateUser } = require
 const authenticateToken = require('./../auth/authMiddleware')
 const { registerPacient, getAllPacients, deletePacient, updatePacient, getPacientById  } = require('./../controller/pacientController')
 const { registerCita, getAllCitas, getCitasPorDia, deleteCita, updateCita } = require('../controller/citasController')
-const { registerPrescription, getAllPrescriptions, getPrescriptionsByPatientId } = require('../controller/prescriptionController')
-const { registerCheckup, getAllCheckups, getCheckupsByPatientId } = require('../controller/checkupController')
+const { registerPrescription, getAllPrescriptions, getPrescriptionsByPatientId, deletePrescription } = require('../controller/prescriptionController')
+const { registerCheckup, getAllCheckups, getCheckupsByPatientId, deleteCheckup } = require('../controller/checkupController')
 const { registerProduct, getAllProducts, getProductById, updateProduct, deleteProduct } = require('../controller/productController')
 const {createCheckoutSession} = require('../controller/pagoController')
 //Rutas de usuarios
@@ -43,9 +43,11 @@ router.put('/citas/:id', authenticateToken, updateCita)
 router.post('/prescripcion/create', registerPrescription)
 router.get('/prescripcion/get-all-prescriptions', getAllPrescriptions)
 router.get('/prescripcion/get-prescriptions-by-patient/:pacienteId', getPrescriptionsByPatientId)
+router.delete('/prescripcion/:id', authenticateToken, deletePrescription)
 
 //Rutas para checkups
 router.post('/checkup/create', registerCheckup)
 router.get('/checkup/get-all-checkups', getAllCheckups)
 router.get('/checkup/get-checkups-by-patient/:pacienteId', getCheckupsByPatientId)
+router.delete('/checkup/:id', authenticateToken, deleteCheckup)
 module.exports = router

@@ -50,6 +50,17 @@ const getPrescriptionsByPatientId = async (req, res) => {
         })
     }
 }
+const deletePrescription = async (req, res) => {
+    const prescriptionId = req.params.id
+    try {
+        await Prescription.deletePrescription(prescriptionId)
+        res.status(204).send()
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Internal Server Error'
+        })
+    }
+}
 
-module.exports = { registerPrescription, getAllPrescriptions, getPrescriptionsByPatientId }
+module.exports = { registerPrescription, getAllPrescriptions, getPrescriptionsByPatientId, deletePrescription }
 

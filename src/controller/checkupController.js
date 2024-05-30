@@ -74,6 +74,17 @@ const getCheckupsByPatientId = async (req, res) => {
         });
     }
 }
+const deleteCheckup = async (req, res) => {
+    const checkupId = req.params.id
+    try {
+        await Checkup.deleteCheckup(checkupId)
+        res.status(204).send()
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Internal Server Error'
+        })
+    }
+}
 // Otros controladores de citas (eliminar, actualizar, obtener por ID) pueden agregarse aquí
 
-module.exports = { registerCheckup, getAllCheckups, getCheckupsByPatientId }
+module.exports = { registerCheckup, getAllCheckups, getCheckupsByPatientId, deleteCheckup }

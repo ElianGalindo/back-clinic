@@ -95,6 +95,13 @@ class Checkup extends ICheckup {
             throw new Error('Error fetching prescriptions by patient ID')
         }
     }
+    static async deleteCheckup(checkupId) {
+        try {
+            await firestore.collection('checkups').doc(checkupId).delete()
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 module.exports = Checkup
