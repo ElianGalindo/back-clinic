@@ -1,5 +1,5 @@
-const admin = require('../config/firebase');
-const ICheckup = require('../interfaces/ICheckup');
+const admin = require('../config/firebase')
+const ICheckup = require('../interfaces/ICheckup')
 const Pacient = require('./Pacients')
 const firestore = admin.firestore()
 const { Storage } = require('@google-cloud/storage')
@@ -7,7 +7,7 @@ const storage = new Storage()
 
 class Checkup extends ICheckup {
     constructor(pacienteId, fecha, hora, tratamiento, doctor, comentarios, archivos, pagos) {
-        super();
+        super()
         this.pacienteId = pacienteId
         this.fecha = fecha
         this.hora = hora
@@ -32,17 +32,17 @@ class Checkup extends ICheckup {
             });
             return new Checkup(pacienteId, fecha, hora, tratamiento, doctor, comentarios, archivos, pagos)
         } catch (error) {
-            throw new Error('Error creating checkup');
+            throw new Error('Error creating checkup')
         }
     }
 
     static async getAllCheckups() {
         try {
-            const checkupsSnapshot = await firestore.collection('checkups').get();
+            const checkupsSnapshot = await firestore.collection('checkups').get()
             const checkups = []
             await Promise.all(checkupsSnapshot.docs.map(async (doc) => {
-                const checkupData = doc.data();
-                const paciente = await Pacient.getPacientById(checkupData.pacienteId);
+                const checkupData = doc.data()
+                const paciente = await Pacient.getPacientById(checkupData.pacienteId)
                 if (paciente) {
                     checkups.push({
                         id: doc.id,
@@ -64,20 +64,20 @@ class Checkup extends ICheckup {
                         archivos: checkupData.archivos,
                         pagos: checkupData.pagos
 
-                    });
+                    })
                 }
-            }));
-            return checkups;
+            }))
+            return checkups
         } catch (error) {
-            throw error;
+            throw error
         }
     }
     static async getCheckupsByPatientId(pacienteId) {
         try {
-            const checkupsSnapshot = await firestore.collection('checkups').where('pacienteId', '==', pacienteId).get();
-            const checkups = [];
+            const checkupsSnapshot = await firestore.collection('checkups').where('pacienteId', '==', pacienteId).get()
+            const checkups = []
             checkupsSnapshot.forEach(doc => {
-                const checkupsData = doc.data();
+                const checkupsData = doc.data()
                 checkups.push({
                     id: doc.id,
                     fecha: checkupsData.fecha,
@@ -88,13 +88,13 @@ class Checkup extends ICheckup {
                     archivos: checkupsData.archivos,
                     pagos: checkupsData.pagos
 
-                });
-            });
-            return checkups;
+                })
+            })
+            return checkups
         } catch (error) {
-            throw new Error('Error fetching prescriptions by patient ID');
+            throw new Error('Error fetching prescriptions by patient ID')
         }
     }
 }
 
-module.exports = Checkup;
+module.exports = Checkup

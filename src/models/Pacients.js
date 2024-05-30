@@ -71,11 +71,11 @@ class Pacient extends IPacient {
 
     static async getPacientsByDoctorId(doctorId) {
         try {
-            const pacientesSnapshot = await firestore.collection('pacients').where('doctorId', '==', doctorId).get();
-            const pacientes = [];
+            const pacientesSnapshot = await firestore.collection('pacients').where('doctorId', '==', doctorId).get()
+            const pacientes = []
             await Promise.all(pacientesSnapshot.docs.map(async (doc) => {
-                const pacienteData = doc.data();
-                const doctor = await User.findByEmail(pacienteData.doctorId);
+                const pacienteData = doc.data()
+                const doctor = await User.findByEmail(pacienteData.doctorId)
                 if (doctor) {
                     pacientes.push({
                         email: doc.id,
@@ -97,12 +97,12 @@ class Pacient extends IPacient {
                         edad: pacienteData.edad,
                         sexo: pacienteData.sexo,
                         archivos: pacienteData.archivos
-                    });
+                    })
                 }
-            }));
-            return pacientes;
+            }))
+            return pacientes
         } catch (error) {
-            throw error;
+            throw error
         }
     }
     static async deletePacient(pacientEmail) {

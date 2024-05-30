@@ -23,7 +23,7 @@ const registerProduct = async (req, res) => {
                 console.error(err);
                 return res.status(400).json({ message: 'Error uploading file' });
             }
-            const {nombre, precio, descripcion} = req.body
+            const {doctorId, nombre, precio, descripcion} = req.body
             let archivoURL = null;
             if (req.file) {
                 // Subir el archivo a Firebase Storage y obtener su URL
@@ -33,7 +33,7 @@ const registerProduct = async (req, res) => {
                 archivoURL = await file.getSignedUrl({ action: 'read', expires: '01-01-2100' });
             }
 
-            const newProduct = await Product.createProducto(nombre, precio, descripcion, archivoURL);
+            const newProduct = await Product.createProducto(doctorId, nombre, precio, descripcion, archivoURL);
             res.status(201).json({ message: 'Product Registered Successfully', product: newProduct });
         })
     } catch (error) {
@@ -44,7 +44,8 @@ const registerProduct = async (req, res) => {
 }
 const getAllProducts = async (req, res) => {
     try {
-        const productos = await Product.getAllProducts()
+        const doctorId = req.user.email
+        const productos = await Product.getProductsByDoctorId(doctorId)
         res.json({
             productos,
             message: 'success'
