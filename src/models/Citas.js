@@ -1,12 +1,12 @@
-const admin = require('../config/firebase');
-const ICita = require('../interfaces/ICitas');
+const admin = require('../config/firebase')
+const ICita = require('../interfaces/ICitas')
 const Pacient = require('./Pacients')
 const User = require('./User')
-const firestore = admin.firestore();
+const firestore = admin.firestore()
 
 class Cita extends ICita {
     constructor(pacienteId, doctorId, fecha, hora, motivo, consultorio) {
-        super();
+        super()
         this.pacienteId = pacienteId
         this.doctorId = doctorId
         this.fecha = fecha
@@ -25,67 +25,16 @@ class Cita extends ICita {
                 motivo,
                 consultorio
             });
-            return new Cita(pacienteId, doctorId, fecha, hora, motivo, consultorio);
+            return new Cita(pacienteId, doctorId, fecha, hora, motivo, consultorio)
         } catch (error) {
-            throw new Error('Error creating cita');
+            throw new Error('Error creating cita')
         }
     }
 
     static async getAllCitas() {
         try {
-            const citasSnapshot = await firestore.collection('citas').get();
+            const citasSnapshot = await firestore.collection('citas').get()
             const citas = []
-            await Promise.all(citasSnapshot.docs.map(async (doc) => {
-                const citaData = doc.data();
-                const paciente = await Pacient.getPacientById(citaData.pacienteId);
-                const doctor = await User.findByEmail(citaData.doctorId);
-                if (paciente && doctor) {
-                    citas.push({
-                        id: doc.id,
-                        paciente: {
-                            email: paciente.email,
-                            nombre: paciente.nombre,
-                            apaterno: paciente.apaterno,
-                            amaterno: paciente.amaterno,
-                            direccion: paciente.direccion,
-                            telefono: paciente.telefono,
-                            edad: paciente.edad,
-                            sexo: paciente.sexo,
-                            archivos: paciente.archivo
-                        },
-                        doctor: {
-                            email: doctor.email,
-                            nombre: doctor.nombre,
-                            apaterno: doctor.apaterno,
-                            amaterno: doctor.amaterno,
-                            direccion: doctor.direccion,
-                            telefono: doctor.telefono,
-                            archivos: doctor.archivo
-                        },
-                        fecha: citaData.fecha,
-                        hora: citaData.hora,
-                        motivo: citaData.motivo,
-                        doctor: citaData.doctor,
-                        consultorio: citaData.consultorio
-                    });
-                }
-            }));
-            return citas;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    static async getAllCitasPorDia(dia) {
-        try {
-            // Obtener referencia a la colección 'citas'
-            const citasRef = firestore.collection('citas');
-            // Crear una consulta para filtrar las citas por el día especificado
-            const query = citasRef.where('fecha', '==', dia);
-            // Ejecutar la consulta
-            const citasSnapshot = await query.get();
-            const citas = [];
-            // Iterar sobre los documentos obtenidos y mapear los datos de las citas
             await Promise.all(citasSnapshot.docs.map(async (doc) => {
                 const citaData = doc.data();
                 const paciente = await Pacient.getPacientById(citaData.pacienteId)
@@ -116,22 +65,26 @@ class Cita extends ICita {
                         fecha: citaData.fecha,
                         hora: citaData.hora,
                         motivo: citaData.motivo,
+                        doctor: citaData.doctor,
                         consultorio: citaData.consultorio
-                    });
+                    })
                 }
-            }));
-            return citas;
+            }))
+            return citas
         } catch (error) {
-            throw error;
+            throw error
         }
     }
-    static async getCitasByDoctorId(doctorId) {
+
+    static async getAllCitasPorDia(dia) {
         try {
-            const citasSnapshot = await firestore.collection('citas').where('doctorId', '==', doctorId).get();
-            const citas = [];
+            const citasRef = firestore.collection('citas')
+            const query = citasRef.where('fecha', '==', dia)
+            const citasSnapshot = await query.get()
+            const citas = []
             await Promise.all(citasSnapshot.docs.map(async (doc) => {
-                const citaData = doc.data();
-                const paciente = await Pacient.getPacientById(citaData.pacienteId);
+                const citaData = doc.data()
+                const paciente = await Pacient.getPacientById(citaData.pacienteId)
                 const doctor = await User.findByEmail(citaData.doctorId)
                 if (paciente && doctor) {
                     citas.push({
@@ -160,12 +113,55 @@ class Cita extends ICita {
                         hora: citaData.hora,
                         motivo: citaData.motivo,
                         consultorio: citaData.consultorio
-                    });
+                    })
                 }
-            }));
-            return citas;
+            }))
+            return citas
         } catch (error) {
-            throw error;
+            throw error
+        }
+    }
+    static async getCitasByDoctorId(doctorId) {
+        try {
+            const citasSnapshot = await firestore.collection('citas').where('doctorId', '==', doctorId).get()
+            const citas = []
+            await Promise.all(citasSnapshot.docs.map(async (doc) => {
+                const citaData = doc.data()
+                const paciente = await Pacient.getPacientById(citaData.pacienteId)
+                const doctor = await User.findByEmail(citaData.doctorId)
+                if (paciente && doctor) {
+                    citas.push({
+                        id: doc.id,
+                        paciente: {
+                            email: paciente.email,
+                            nombre: paciente.nombre,
+                            apaterno: paciente.apaterno,
+                            amaterno: paciente.amaterno,
+                            direccion: paciente.direccion,
+                            telefono: paciente.telefono,
+                            edad: paciente.edad,
+                            sexo: paciente.sexo,
+                            archivos: paciente.archivo
+                        },
+                        doctor: {
+                            email: doctor.email,
+                            nombre: doctor.nombre,
+                            apaterno: doctor.apaterno,
+                            amaterno: doctor.amaterno,
+                            direccion: doctor.direccion,
+                            telefono: doctor.telefono,
+                            archivos: doctor.archivo
+                        },
+                        fecha: citaData.fecha,
+                        hora: citaData.hora,
+                        motivo: citaData.motivo,
+                        consultorio: citaData.consultorio
+                    })
+                }
+            }))
+            return citas
+        } catch (error) {
+            throw error
         }
     }
     static async deleteCita(citaId) {
@@ -190,4 +186,4 @@ class Cita extends ICita {
     
 }
 
-module.exports = Cita;
+module.exports = Cita

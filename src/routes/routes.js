@@ -16,11 +16,11 @@ router.delete('/users/:email', authenticateToken, deleteUser)
 router.put('/users/:email', authenticateToken, updateUser)
 
 // Rutas para productos
-router.post('/products/create', registerProduct)
-router.get('/products/get-all-products', getAllProducts)
-router.get('/products/:id', getProductById)
-router.put('/products/:id', updateProduct)
-router.delete('/products/:id', deleteProduct)
+router.post('/products/create', authenticateToken, registerProduct)
+router.get('/products/get-all-products', authenticateToken, getAllProducts)
+router.get('/products/:id', authenticateToken, getProductById)
+router.put('/products/:id', authenticateToken, updateProduct)
+router.delete('/products/:id', authenticateToken, deleteProduct)
 
 //Ruta de pago con stripe
 router.post('/create-stripe-session', createCheckoutSession)

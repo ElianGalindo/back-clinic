@@ -93,7 +93,7 @@ class User extends IUser {
 
     static async updateCart(email, cart) {
         try {
-            await firestore.collection('users').doc(email).update({ cart });
+            await firestore.collection('users').doc(email).update({ cart })
         } catch (error) {
             throw error;
         }

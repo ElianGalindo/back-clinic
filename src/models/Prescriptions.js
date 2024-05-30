@@ -1,11 +1,11 @@
-const admin = require('../config/firebase');
-const IPrescription = require('../interfaces/IPrescription');
+const admin = require('../config/firebase')
+const IPrescription = require('../interfaces/IPrescription')
 const Pacient = require('./Pacients')
-const firestore = admin.firestore();
+const firestore = admin.firestore()
 
 class Prescription extends IPrescription {
     constructor(pacienteId, fecha, hora, nota, doctor) {
-        super();
+        super()
         this.pacienteId = pacienteId
         this.fecha = fecha
         this.hora = hora
@@ -21,7 +21,7 @@ class Prescription extends IPrescription {
                 hora,
                 nota,
                 doctor
-            });
+            })
             return new Prescription(pacienteId, fecha, hora, nota, doctor);
         } catch (error) {
             throw new Error('Error creating prescription');
@@ -30,11 +30,11 @@ class Prescription extends IPrescription {
 
     static async getAllPrescriptions() {
         try {
-            const prescripcionesSnapshot = await firestore.collection('prescripciones').get();
+            const prescripcionesSnapshot = await firestore.collection('prescripciones').get()
             const prescripciones = []
             await Promise.all(prescripcionesSnapshot.docs.map(async (doc) => {
-                const prescripcionData = doc.data();
-                const paciente = await Pacient.getPacientById(prescripcionData.pacienteId);
+                const prescripcionData = doc.data()
+                const paciente = await Pacient.getPacientById(prescripcionData.pacienteId)
                 if (paciente) {
                     prescripciones.push({
                         id: doc.id,
@@ -52,35 +52,35 @@ class Prescription extends IPrescription {
                         hora: prescripcionData.hora,
                         nota: prescripcionData.nota,
                         doctor: prescripcionData.doctor
-                    });
+                    })
                 }
-            }));
-            return prescripciones;
+            }))
+            return prescripciones
         } catch (error) {
-            throw error;
+            throw error
         }
     }
     
     static async getPrescriptionsByPatientId(pacienteId) {
         try {
-            const prescriptionsSnapshot = await firestore.collection('prescripciones').where('pacienteId', '==', pacienteId).get();
-            const prescriptions = [];
+            const prescriptionsSnapshot = await firestore.collection('prescripciones').where('pacienteId', '==', pacienteId).get()
+            const prescriptions = []
             prescriptionsSnapshot.forEach(doc => {
-                const prescriptionData = doc.data();
+                const prescriptionData = doc.data()
                 prescriptions.push({
                     id: doc.id,
                     fecha: prescriptionData.fecha,
                     hora: prescriptionData.hora,
                     nota: prescriptionData.nota,
                     doctor: prescriptionData.doctor
-                });
-            });
-            return prescriptions;
+                })
+            })
+            return prescriptions
         } catch (error) {
-            throw new Error('Error fetching prescriptions by patient ID');
+            throw new Error('Error fetching prescriptions by patient ID')
         }
     }
     
 }
 
-module.exports = Prescription;
+module.exports = Prescription
