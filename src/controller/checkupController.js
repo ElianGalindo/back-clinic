@@ -85,6 +85,6 @@ const deleteCheckup = async (req, res) => {
         })
     }
 }
-// Otros controladores de citas (eliminar, actualizar, obtener por ID) pueden agregarse aquí
+
 
 module.exports = { registerCheckup, getAllCheckups, getCheckupsByPatientId, deleteCheckup }
